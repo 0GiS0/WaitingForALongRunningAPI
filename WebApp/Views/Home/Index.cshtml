@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="container">
+    <div class="row" style="margin:10px;">
+        <div class="col-12">
+            <div class="input-group">
+                <input id="userName" name="userName" class="form-control" type="text" placeholder="Enter your user name" />
+                <input id="howLong" name="howLong" class="form-control" type="text" placeholder="How long do you want to wait? (minutes)" />
+                <div class="input-group-append">
+                    <button id="btnStartLongRunningCall" class="btn btn-danger" disabled>Start Long Running Call</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <ul id="output" class="list-unstyled" style="font-family:Consolas">
+        </ul>
+    </div>
+</div>

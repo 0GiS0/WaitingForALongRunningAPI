@@ -25,7 +25,7 @@ namespace DurableFunctions.Orchestrators
                 await context.CallActivityAsync<string>(nameof(LongRunningActivities.SayHello), wait),
                 await context.CallActivityAsync<string>(nameof(LongRunningActivities.SayHello), wait * 2),
                 await context.CallActivityAsync<string>(nameof(LongRunningActivities.SayHello), wait * 3)
-            };
+            };            
 
             return string.Join("<br/>", outputs.ToArray());
         }
@@ -45,9 +45,9 @@ namespace DurableFunctions.Orchestrators
             {
                 timeout = false;
 
-                var status = await context.CallActivityAsync<StatusResponse>(nameof(MonitorActivities.CheckWorkflowStatus), info.StatusQueryGetUri);
+                var status = await context.CallActivityAsync<DurableOrchestrationStatus>(nameof(MonitorActivities.CheckWorkflowStatus), info.WorkflowId);
 
-                if (status.RuntimeStatus == "Completed")
+                if (status.RuntimeStatus == OrchestrationRuntimeStatus.Completed)
                 {
                     await context.CallActivityAsync(nameof(SignalRActivities.SendUpdate), new Status { UserName = info.UserName, Message = $"Result: <br/> {status.Output}" });
                     await context.CallActivityAsync(nameof(SignalRActivities.SendUpdate), new Status { UserName = info.UserName, Message = $"Completed! It took {(context.CurrentUtcDateTime - status.CreatedTime).TotalMinutes} minutes." });

@@ -10,7 +10,7 @@ namespace DurableFunctions.Activities
         [FunctionName(nameof(SayHello))]
         public static string SayHello([ActivityTrigger] int wait)
         {
-            Thread.Sleep(wait);
+            Thread.Sleep(wait); // :-P
 
             return $"Hello me with {wait / 60000} minutes of delay";
         }

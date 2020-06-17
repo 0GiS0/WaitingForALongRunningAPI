@@ -14,31 +14,21 @@ namespace DurableFunctions.Triggers
     public static class HttpTrigger
     {
         [FunctionName(nameof(StartLongRunningCall))]
-        public static async Task<HttpResponseMessage> StartLongRunningCall(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestMessage req,
-            [DurableClient] IDurableOrchestrationClient starter,
-            ILogger log)
+        public static async Task<HttpResponseMessage> StartLongRunningCall([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestMessage req, [DurableClient] IDurableOrchestrationClient starter, ILogger log)
         {
-
             var requestBody = await req.Content.ReadAsStringAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            //Try to get the name of the player
-            int wait = data?.wait;
 
-            // Function input comes from the request content.
-            string instanceId = await starter.StartNewAsync(nameof(Workflows.LongRunningWorkflow), null, wait);
+            //Execute long running call using an orchestrator
+            string instanceId = await starter.StartNewAsync(nameof(Workflows.LongRunningWorkflow), null, data?.wait);
 
-            var statusResponse = starter.CreateCheckStatusResponse(req, instanceId);
-            dynamic checkStatusReponse = JsonConvert.DeserializeObject(await statusResponse.Content.ReadAsStringAsync());
-
-            await starter.StartNewAsync(nameof(Workflows.MonitorJob), null, new Info { UserName = data?.userName, StatusQueryGetUri = checkStatusReponse.statusQueryGetUri });
+            //Monitor the previous workflow
+            await starter.StartNewAsync(nameof(Workflows.MonitorJob), null, new Info { UserName = data?.userName, WorkflowId = instanceId });
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
-            //return starter.CreateCheckStatusResponse(req, instanceId);
             return req.CreateResponse(HttpStatusCode.OK);
-
         }
     }
 }

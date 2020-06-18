@@ -30,8 +30,8 @@ namespace DurableFunctions.Orchestrators
             return string.Join("<br/>", outputs.ToArray());
         }
 
-        [FunctionName(nameof(MonitorJob))]
-        public static async Task MonitorJob([OrchestrationTrigger] IDurableOrchestrationContext context)
+        [FunctionName(nameof(MonitorWorkflow))]
+        public static async Task MonitorWorkflow([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             var info = context.GetInput<Info>();
 

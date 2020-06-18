@@ -24,7 +24,7 @@ namespace DurableFunctions.Triggers
             string instanceId = await starter.StartNewAsync(nameof(Workflows.LongRunningWorkflow), null, data?.wait);
 
             //Monitor the previous workflow
-            await starter.StartNewAsync(nameof(Workflows.MonitorJob), null, new Info { UserName = data?.userName, WorkflowId = instanceId });
+            await starter.StartNewAsync(nameof(Workflows.MonitorWorkflow), null, new Info { UserName = data?.userName, WorkflowId = instanceId });
 
             log.LogInformation($"Started orchestration with ID = '{instanceId}'.");
 
